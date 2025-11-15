@@ -1,0 +1,51 @@
+project:
+  name: diabetes_mlops
+  version: "1.0.0"
+  random_seed: 42
+
+data:
+  raw_path: "data/raw/diabetes.csv"
+  processed_dir: "data/processed"
+  test_size: 0.2
+  target_column: "Outcome"
+  
+preprocessing:
+  zero_value_features: 
+    - Glucose
+    - BloodPressure
+    - SkinThickness
+    - Insulin
+    - BMI
+  scaling_method: "standard"  # standard or minmax
+  
+model:
+  type: "logistic_regression"
+  hyperparameters:
+    C: 1.0
+    penalty: "l2"
+    solver: "liblinear"
+    max_iter: 1000
+    class_weight: "balanced"
+  
+tuning:
+  enabled: true
+  method: "grid"  # grid or random
+  cv_folds: 5
+  param_grid:
+    C: [0.001, 0.01, 0.1, 1, 10, 100]
+    penalty: ["l1", "l2"]
+    solver: ["liblinear"]
+    
+mlflow:
+  tracking_uri: "./mlruns"
+  experiment_name: "diabetes_classification"
+  
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - roc_auc
+  save_confusion_matrix: true
+  save_roc_curve: true
